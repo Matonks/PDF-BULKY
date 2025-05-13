@@ -1,3 +1,4 @@
+````markdown
 # 📝 PDF Form Filler
 
 Welcome to the **PDF Form Filler**! Ever wished you could magically auto-fill a PDF form using data from an Excel sheet? Well, your wish is granted! 🎩✨
@@ -30,25 +31,29 @@ Welcome to the **PDF Form Filler**! Ever wished you could magically auto-fill a 
    ```bash
    git clone https://github.com/yourname/pdf-form-filler.git
    cd pdf-form-filler
-Install dependencies
-Make sure you have Python 3.7+ and Ghostscript installed.
+````
 
-bash
-Copy
-Edit
-pip install -r requirements.txt
-Run the app
+2. **Install dependencies**
+   Make sure you have Python 3.7+ and Ghostscript installed.
 
-bash
-Copy
-Edit
-python app.py
-Then head to http://127.0.0.1:5000 in your browser.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-📂 Project Structure
-bash
-Copy
-Edit
+3. **Run the app**
+
+   ```bash
+   python app.py
+   ```
+
+   Then head to `http://127.0.0.1:5000` in your browser.
+
+---
+
+## 📂 Project Structure
+
+```text
+pdf-form-filler/
 ├── app.py              # Flask server & PDF/Excel magic 🐍
 ├── templates/
 │   └── index.html      # User-facing drag-and-drop form UI 🎨
@@ -56,28 +61,37 @@ Edit
 ├── generated/          # Final filled (& flattened) PDFs 📥
 ├── requirements.txt    # Python deps (Flask, pandas, pypdf, etc.) 📦
 └── README.md           # You’re looking at it! 😉
+```
 
-🎉 How to Use
-Open the web page.
+---
 
-Drag your PDF form template into the first box.
+## 🎉 How to Use
 
-Drag your Excel data file into the second box.
+1. Open the web page.
+2. Drag your **PDF form template** into the first box.
+3. Drag your **Excel data file** into the second box.
+4. Click **Generate Forms** and watch the magic happen! 🪄
+5. Peek into the `generated/` folder for your batch of filled PDFs.
 
-Click Generate Forms and watch the magic happen! 🪄
+---
 
-Peek into the generated/ folder for your batch of filled PDFs.
+## 🤝 Contributing
 
-🤝 Contributing
 Bug reports, feature requests, or just want to say hi?
 
-Open an issue
+* Open an issue
+* Submit a PR
+* Share your emojis 🎈
 
-Submit a PR
+---
 
-Share your emojis 🎈
+## 📜 License
 
-📜 License
-This project is licensed under the MIT License – because who doesn’t love open source? ❤️
+This project is licensed under the **MIT License** – because who doesn’t love open source? ❤️
 
-“Automate the boring stuff” – you, after using this tool. 😎
+---
+
+> “Automate the boring stuff” – you, after using this tool. 😎
+
+```
+```
