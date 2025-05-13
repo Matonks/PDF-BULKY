@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Form Filler</title>
+  <style>
+    :root {
+      --background: #ffffff;
+      --card: #f5f5f7;
+      --text: #1d1d1f;
+      --text-secondary: #86868b;
+      --accent: #0071e3;
+      --border: #d2d2d7;
+      --success: #34c759;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 0;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      padding: 2rem;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      text-align: center;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 2.5rem;
+      font-size: 17px;
+      font-weight: 400;
+    }
+
+    .upload-area {
+      background-color: var(--card);
+      border-radius: 18px;
+      padding: 2.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+      font-size: 17px;
+    }
+
+    .file-input-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      background-color: var(--background);
+      overflow: hidden;
+    }
+
+    .file-input-container:hover {
+      border-color: var(--accent);
+    }
+
+    .file-input-container svg {
+      width: 40px;
+      height: 40px;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      transition: transform 0.2s ease;
+    }
+
+    .file-input-container:hover svg {
+      transform: translateY(-3px);
+    }
+
+    .file-input-container p {
+      margin: 0.25rem 0;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    .file-input-container .file-name {
+      font-weight: 500;
+      color: var(--text);
+      margin-top: 0.75rem;
+      word-break: break-all;
+      max-width: 100%;
+      font-size: 15px;
+    }
+
+    .file-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--accent);
+      color: white;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      border-radius: 980px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      font-size: 17px;
+      text-align: center;
+      height: 50px;
+    }
+
+    .btn:hover {
+      background-color: #0077ED;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .btn:disabled {
+      background-color: #d2d2d7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    /* Progress bar styles */
+    .progress-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background-color: var(--card);
+      overflow: hidden;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .progress-container.active {
+      opacity: 1;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 0.2s ease;
+    }
+
+    .progress-status {
+      position: fixed;
+      bottom: 12px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .progress-status.active {
+      opacity: 1;
+    }
+
+    /* Processing overlay */
+    .processing-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .processing-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .processing-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 1rem;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.6;
+        transform: scale(0.98);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0.6;
+        transform: scale(0.98);
+      }
+    }
+
+    .processing-text {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .processing-subtext {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.5rem;
+      }
+
+      .upload-area {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>PDF Form Filler</h1>
+    <p class="subtitle">Automatically fill PDF forms with Excel data</p>
+
+    <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
+      <div class="upload-area">
+        <div class="form-group">
+          <label for="pdf">PDF Template</label>
+          <div class="file-input-container" id="pdfContainer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            <p>Drop your PDF form here</p>
+            <p class="file-name" id="pdfName"></p>
+            <input type="file" name="pdf" id="pdf" class="file-input" accept=".pdf" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="excel">Excel Data</label>
+          <div class="file-input-container" id="excelContainer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <p>Drop your Excel file here</p>
+            <p class="file-name" id="excelName"></p>
+            <input type="file" name="excel" id="excel" class="file-input" accept=".xlsx,.xls" required>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn" disabled>Generate Forms</button>
+    </form>
+  </div>
+
+  <!-- Progress bar at the bottom -->
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-status" id="progressStatus">Processing...</div>
+
+  <!-- Processing overlay -->
+  <div class="processing-overlay" id="processingOverlay">
+    <svg class="processing-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      <polyline points="17 2 12 7 7 2"></polyline>
+      <line x1="12" y1="7" x2="12" y2="18"></line>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+    </svg>
+    <p class="processing-text">Generating PDF Forms</p>
+    <p class="processing-subtext" id="processingSubtext">Processing row 1 of 10</p>
+  </div>
+
+  <script>
+    // Display file names when selected
+    document.getElementById('pdf').addEventListener('change', function (e) {
+      const fileName = e.target.files[0] ? e.target.files[0].name : '';
+      document.getElementById('pdfName').textContent = fileName;
+      checkFormValidity();
+
+      if (fileName) {
+        document.getElementById('pdfContainer').style.borderColor = 'var(--success)';
+      } else {
+        document.getElementById('pdfContainer').style.borderColor = 'var(--border)';
+      }
+    });
+
+    document.getElementById('excel').addEventListener('change', function (e) {
+      const fileName = e.target.files[0] ? e.target.files[0].name : '';
+      document.getElementById('excelName').textContent = fileName;
+      checkFormValidity();
+
+      if (fileName) {
+        document.getElementById('excelContainer').style.borderColor = 'var(--success)';
+      } else {
+        document.getElementById('excelContainer').style.borderColor = 'var(--border)';
+      }
+    });
+
+    // Enable/disable submit button based on form validity
+    function checkFormValidity() {
+      const pdfFile = document.getElementById('pdf').files[0];
+      const excelFile = document.getElementById('excel').files[0];
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (pdfFile && excelFile) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    }
+
+    // Add drag and drop functionality
+    ['pdf', 'excel'].forEach(fileType => {
+      const container = document.getElementById(`${fileType}Container`);
+      const input = document.getElementById(fileType);
+
+      container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        container.style.borderColor = 'var(--accent)';
+        container.style.backgroundColor = 'rgba(0, 113, 227, 0.05)';
+      });
+
+      container.addEventListener('dragleave', () => {
+        const fileName = input.files[0] ? input.files[0].name : '';
+        if (fileName) {
+          container.style.borderColor = 'var(--success)';
+        } else {
+          container.style.borderColor = 'var(--border)';
+        }
+        container.style.backgroundColor = 'var(--background)';
+      });
+
+      container.addEventListener('drop', (e) => {
+        e.preventDefault();
+        container.style.backgroundColor = 'var(--background)';
+
+        if (e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          const event = new Event('change');
+          input.dispatchEvent(event);
+        }
+      });
+    });
+
+    // Progress bar functionality
+    const uploadForm = document.getElementById('uploadForm');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressStatus = document.getElementById('progressStatus');
+    const processingOverlay = document.getElementById('processingOverlay');
+    const processingSubtext = document.getElementById('processingSubtext');
+
+    uploadForm.addEventListener('submit', function (e) {
+      // Get the Excel file to estimate number of rows (we'll simulate this)
+      const excelFile = document.getElementById('excel').files[0];
+      if (!excelFile) return;
+
+      // Show progress elements
+      progressContainer.classList.add('active');
+      progressStatus.classList.add('active');
+      processingOverlay.classList.add('active');
+
+      // Simulate progress based on file size (just for visual feedback)
+      const fileSize = excelFile.size;
+      const estimatedRows = Math.max(5, Math.min(50, Math.floor(fileSize / 5000))); // Rough estimate
+
+      let currentRow = 0;
+      const updateInterval = 500; // ms between updates
+      const totalDuration = Math.min(30000, Math.max(5000, fileSize / 50)); // Cap between 5-30 seconds
+
+      function updateProgress() {
+        currentRow++;
+        const progress = (currentRow / estimatedRows) * 100;
+
+        // Update progress bar
+        progressBar.style.width = `${progress}%`;
+
+        // Update status text
+        processingSubtext.textContent = `Processing row ${currentRow} of ${estimatedRows}`;
+
+        // Continue until complete
+        if (currentRow < estimatedRows) {
+          setTimeout(updateProgress, updateInterval);
+        }
+      }
+
+      // Start progress simulation
+      setTimeout(updateProgress, updateInterval);
+
+      // Don't actually prevent form submission - let it process normally
+      // This is just for visual feedback while the server processes
+    });
+  </script>
+</body>
+
+</html>
