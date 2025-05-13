@@ -1,4 +1,3 @@
-````markdown
 # 📝 PDF Form Filler
 
 Welcome to the **PDF Form Filler**! Ever wished you could magically auto-fill a PDF form using data from an Excel sheet? Well, your wish is granted! 🎩✨
@@ -31,9 +30,9 @@ Welcome to the **PDF Form Filler**! Ever wished you could magically auto-fill a 
    ```bash
    git clone https://github.com/yourname/pdf-form-filler.git
    cd pdf-form-filler
-````
+   ```
 
-2. **Install dependencies**
+2. **Install dependencies**  
    Make sure you have Python 3.7+ and Ghostscript installed.
 
    ```bash
@@ -54,13 +53,13 @@ Welcome to the **PDF Form Filler**! Ever wished you could magically auto-fill a 
 
 ```text
 pdf-form-filler/
-├── app.py              # Flask server & PDF/Excel magic 🐍
+├── app.py              # Flask server & PDF/Excel 🐍
 ├── templates/
 │   └── index.html      # User-facing drag-and-drop form UI 🎨
 ├── uploads/            # Temporary storage for uploads 📤
 ├── generated/          # Final filled (& flattened) PDFs 📥
 ├── requirements.txt    # Python deps (Flask, pandas, pypdf, etc.) 📦
-└── README.md           # You’re looking at it! 😉
+└── README.md           # You’re looking at it! 
 ```
 
 ---
@@ -87,11 +86,8 @@ Bug reports, feature requests, or just want to say hi?
 
 ## 📜 License
 
-This project is licensed under the **MIT License** – because who doesn’t love open source? ❤️
+This project is licensed under the **MIT License** 
 
 ---
 
 > “Automate the boring stuff” – you, after using this tool. 😎
-
-```
-```
