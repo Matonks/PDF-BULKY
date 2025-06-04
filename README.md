@@ -76,11 +76,7 @@ pdf-form-filler/
 
 ## 🤝 Contributing
 
-Bug reports, feature requests, or just want to say hi?
-
-* Open an issue
-* Submit a PR
-* Share your emojis 🎈
+Bug reports, feature requests.
 
 ---
 
@@ -89,5 +85,3 @@ Bug reports, feature requests, or just want to say hi?
 This project is licensed under the **MIT License** 
 
 ---
-
-> “Automate the boring stuff” – you, after using this tool. 😎
